@@ -61,7 +61,7 @@ export const Topbar: React.FC<TopbarProps> = ({ searchQuery, setSearchQuery, onS
   };
 
   return (
-    <header className="h-16 bg-[#0c121e]/90 backdrop-blur-md border-b border-slate-800 px-6 flex items-center justify-between sticky top-0 z-40">
+    <header className="h-16 bg-[#090d16]/85 backdrop-blur-xl border-b border-slate-800/80 px-6 flex items-center justify-between sticky top-0 z-40">
       
       {/* Global Search Input with Popover */}
       <div className="relative w-full max-w-lg" ref={dropdownRef}>
@@ -72,7 +72,7 @@ export const Topbar: React.FC<TopbarProps> = ({ searchQuery, setSearchQuery, onS
           onChange={(e) => setSearchQuery(e.target.value)}
           onFocus={() => { if (results.length > 0) setIsOpen(true); }}
           placeholder="Global Search (Patient Name, MRN, Test, Med, Diagnosis, Conflict)..."
-          className="w-full pl-10 pr-9 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-teal-500 transition-colors shadow-inner"
+          className="w-full pl-10 pr-9 py-2 bg-slate-900/80 border border-slate-700/70 rounded-xl text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 transition-all shadow-inner"
         />
         {searchQuery && (
           <button
@@ -85,7 +85,7 @@ export const Topbar: React.FC<TopbarProps> = ({ searchQuery, setSearchQuery, onS
 
         {/* Global Search Results Dropdown */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d1424] border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-50 max-h-96 overflow-y-auto">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-[#0d1424]/95 backdrop-blur-2xl border border-slate-700/80 rounded-xl shadow-2xl overflow-hidden z-50 max-h-96 overflow-y-auto">
             <div className="p-2.5 bg-slate-900/60 border-b border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
               <span className="font-semibold uppercase tracking-wider text-slate-300">
                 {isSearching ? 'Searching...' : `Found ${results.length} Matches`}

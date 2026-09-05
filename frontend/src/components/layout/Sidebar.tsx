@@ -25,11 +25,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   ];
 
   return (
-    <aside className="w-64 bg-[#0c121e] border-r border-slate-800 flex flex-col justify-between flex-shrink-0 select-none">
+    <aside className="w-64 bg-[#090d16]/90 backdrop-blur-xl border-r border-slate-800/80 flex flex-col justify-between flex-shrink-0 select-none">
       <div>
         {/* Brand Header */}
-        <div className="h-16 flex items-center px-6 border-b border-slate-800 gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-700 to-teal-500 flex items-center justify-center text-white font-black shadow-[0_0_15px_rgba(20,184,166,0.3)]">
+        <div className="h-16 flex items-center px-6 border-b border-slate-800/80 gap-3">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-teal-600 to-teal-400 flex items-center justify-center text-white font-black shadow-[0_0_20px_rgba(45,212,191,0.35)]">
             <Activity className="w-5 h-5 text-white" />
           </div>
           <div>
