@@ -1,0 +1,12 @@
+﻿{
+  "framework": "vite",
+  "installCommand": "cd ../frontend && npm install",
+  "buildCommand": "cd ../frontend && npm run build && cp -r dist ../backend/dist",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
