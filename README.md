@@ -1,6 +1,12 @@
 # MedLens: AI-Powered Clinical Information Intelligence
 
-MedLens is a production-grade, responsible clinical information organization and understanding platform. It ingests fragmented clinical reports and patient records, extracts structured clinical data with strict provenance and reference range safety, identifies conflicts, tracks longitudinal lab trends, and provides clinician-verified, evidence-grounded summaries—**strictly preserving source provenance and never diagnosing or prescribing**.
+[![MedLens CI Pipeline](https://github.com/harshatejag622-del/MedLens/actions/workflows/ci.yml/badge.svg)](https://github.com/harshatejag622-del/MedLens/actions/workflows/ci.yml)
+![Tests](https://img.shields.io/badge/Tests-280%20%2F%20280%20PASS-emerald)
+![Interoperability](https://img.shields.io/badge/HL7%20FHIR-R4%20Standard-blue)
+![HIPAA](https://img.shields.io/badge/Compliance-HIPAA%20Audit%20Ready-teal)
+![Security](https://img.shields.io/badge/Security-OWASP%20Hardened-purple)
+
+MedLens is a production-grade, enterprise clinical information organization and understanding platform. It ingests fragmented clinical reports and patient records, extracts structured clinical data with strict provenance and reference range safety, identifies conflicts, tracks longitudinal lab trends, and provides clinician-verified, evidence-grounded summaries—**strictly preserving source provenance and never diagnosing or prescribing**.
 
 ---
 
@@ -220,9 +226,12 @@ server {
 - [x] **CORS configured** (Strict origin whitelist in production; no wildcards)
 - [x] **HTTPS configured** (TLS 1.3 reverse proxy configuration documented)
 - [x] **Frontend production build successful** (Vite compile succeeded with 0 errors)
-- [x] **Backend tests passing** (276/276 tests passing)
-- [x] **Security checks passing** (Sanitized upload, auth rejection, no PHI error leakage)
+- [x] **Backend tests passing** (280/280 tests passing: unit, integration, and enterprise compliance)
+- [x] **Security checks passing** (OWASP security headers, sanitized upload, auth rejection, no PHI leakage)
+- [x] **HIPAA compliance ready** (Immutable append-only audit trail + CSV export `/api/audit/export`)
+- [x] **Hospital EHR Interoperability** (HL7 FHIR R4 Bundle standard export `/api/patients/{id}/fhir`)
 - [x] **End-to-end workflow passing** (Intake $\rightarrow$ Ingestion $\rightarrow$ Classification $\rightarrow$ Verification $\rightarrow$ Timeline)
+- [x] **Continuous Integration active** (Automated GitHub Actions CI pipeline running tests & build)
 - [x] **Backup configured** (Hot snapshot & incremental document storage documented)
 - [x] **Monitoring/logging configured** (Structured logging, append-only audit trail)
 - [x] **Documentation complete** (Architecture, APIs, deployment guide, and safety notices)

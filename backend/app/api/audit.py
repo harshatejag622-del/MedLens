@@ -29,3 +29,57 @@ def get_audit_logs(
             "details": log.details
         } for log in logs
     ]
+
+@router.get("/export")
+def export_audit_logs_csv(
+    entity_type: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """
+    HIPAA Compliance Audit Export:
+    Provides an immutable, timestamped CSV export of all clinical actions,
+    provenance modifications, and clinician review decisions.
+    """
+    import csv
+    import io
+    from fastapi.responses import Response
+
+    query = db.query(AuditLog)
+    if entity_type:
+        query = query.filter(AuditLog.entity_type == entity_type.upper())
+    logs = query.order_by(AuditLog.timestamp.desc()).all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "Audit ID",
+        "Timestamp (UTC)",
+        "Action Taken",
+        "Entity Type",
+        "Entity ID",
+        "Clinician / User ID",
+        "Source IP Address",
+        "Audit Details"
+    ])
+
+    for log in logs:
+        writer.writerow([
+            log.id,
+            log.timestamp.isoformat() + "Z" if log.timestamp else "",
+            log.action,
+            log.entity_type,
+            log.entity_id,
+            log.user_id or "SYSTEM",
+            log.ip_address or "INTERNAL",
+            log.details or ""
+        ])
+
+    csv_content = output.getvalue()
+    return Response(
+        content=csv_content,
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": "attachment; filename=hipaa_clinical_audit_trail.csv"
+        }
+    )
+

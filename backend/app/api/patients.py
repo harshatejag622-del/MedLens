@@ -27,6 +27,7 @@ from app.schemas.patient import (
     TimelineEventOverviewItem
 )
 from app.services.audit_service import AuditService
+from app.services.fhir_service import convert_patient_to_fhir_bundle
 
 router = APIRouter(prefix="/patients", tags=["Patients"])
 
@@ -550,4 +551,22 @@ def unarchive_patient(patient_id: str, db: Session = Depends(get_db)):
     )
 
     return patient
+
+
+@router.get("/{patient_id}/fhir")
+def export_patient_fhir(
+    patient_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Hospital EHR Interoperability (HL7 FHIR R4):
+    Exports the complete patient clinical record including demographics,
+    active conditions, verified observations, and allergies as an official
+    HL7 FHIR R4 Bundle.
+    """
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient record not found")
+
+    return convert_patient_to_fhir_bundle(patient)
 
