@@ -1,8 +1,8 @@
-﻿{
+{
   "name": "medlens-backend-bridge",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "cd ../frontend && npm install && npm run build && cp -r dist ../backend/dist"
+    "build": "node ../build.js"
   }
 }
