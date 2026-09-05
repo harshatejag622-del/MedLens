@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Text
@@ -20,7 +21,7 @@ class ConflictItem(Base):
     resolution_notes = Column(Text, nullable=True) # Reviewer note
     resolved_by = Column(String(100), nullable=True)
     resolved_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     patient = relationship("Patient", back_populates="conflicts")
 
@@ -44,7 +45,7 @@ class ReviewItem(Base):
     reviewer_note = Column(Text, nullable=True)
     reviewed_by = Column(String(100), nullable=True)
     reviewed_at = Column(DateTime, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     document = relationship("Document", back_populates="review_items")
     patient = relationship("Patient")

@@ -1,8 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
 from datetime import datetime
 
 class LabResultResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     patient_id: str
     document_id: Optional[str] = None
@@ -28,9 +30,6 @@ class LabResultResponse(BaseModel):
     version: int
     report_date: Optional[str] = None
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 class LabResultCorrectionRequest(BaseModel):
     value: Optional[float] = None

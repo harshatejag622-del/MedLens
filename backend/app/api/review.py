@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 from typing import List, Optional, Dict, Any
 from datetime import datetime
 import json
@@ -174,7 +175,7 @@ def handle_review_action(
 
     prev_status = item.status
     prev_value = item.current_value
-    now = datetime.utcnow()
+    now = utc_now_naive()
 
     # Capture original value if not yet captured
     if not item.original_value:

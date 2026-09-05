@@ -1,3 +1,5 @@
+from __future__ import annotations
+from app.utils.datetime_utils import utc_now_naive, utc_now
 """
 Document Processing Pipeline
 ==============================
@@ -26,7 +28,6 @@ Usage:
     result = process_document(db, document_id)
 """
 
-from __future__ import annotations
 
 import logging
 import uuid
@@ -120,8 +121,8 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
             document_id=document_id,
             status="PROCESSING",
             current_step="INITIALIZING",
-            started_at=datetime.utcnow(),
-            log_messages=f"[{datetime.utcnow().isoformat()}] Processing started.",
+            started_at=utc_now_naive(),
+            log_messages=f"[{utc_now_naive().isoformat()}] Processing started.",
         )
         db.add(job)
 
@@ -130,7 +131,7 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
     doc.processing_error = None
     job.status = "PROCESSING"
     job.current_step = "OCR_EXTRACTION"
-    job.log_messages = (job.log_messages or "") + f"\n[{datetime.utcnow().isoformat()}] OCR extraction started."
+    job.log_messages = (job.log_messages or "") + f"\n[{utc_now_naive().isoformat()}] OCR extraction started."
     db.commit()
 
     # ---------------------------------------------------------------
@@ -155,7 +156,7 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
     # Step 2: Persist DocumentPage records
     # ---------------------------------------------------------------
     job.current_step = "PERSISTING_PAGES"
-    job.log_messages += f"\n[{datetime.utcnow().isoformat()}] Persisting {ocr_result.page_count} page(s)."
+    job.log_messages += f"\n[{utc_now_naive().isoformat()}] Persisting {ocr_result.page_count} page(s)."
     db.commit()
 
     # Remove any existing pages from previous attempts
@@ -175,7 +176,7 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
     # Step 3: AI Extraction
     # ---------------------------------------------------------------
     job.current_step = "AI_EXTRACTION"
-    job.log_messages += f"\n[{datetime.utcnow().isoformat()}] AI extraction started."
+    job.log_messages += f"\n[{utc_now_naive().isoformat()}] AI extraction started."
     db.commit()
 
     try:
@@ -187,7 +188,7 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
             patient_context=None,
         )
         job.log_messages += (
-            f"\n[{datetime.utcnow().isoformat()}] "
+            f"\n[{utc_now_naive().isoformat()}] "
             f"AI extraction complete via '{provider.provider_name}'. "
             f"Labs: {len(payload.lab_results)}, "
             f"Conditions: {len(payload.conditions)}, "
@@ -200,7 +201,7 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
     # Step 4: Business Validation
     # ---------------------------------------------------------------
     job.current_step = "BUSINESS_VALIDATION"
-    job.log_messages += f"\n[{datetime.utcnow().isoformat()}] Business validation started."
+    job.log_messages += f"\n[{utc_now_naive().isoformat()}] Business validation started."
     db.commit()
 
     try:
@@ -218,8 +219,8 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
         doc.processing_error = f"Validation errors: {error_summary}"
         job.status = "REVIEW_REQUIRED"
         job.current_step = "VALIDATION_ERRORS"
-        job.completed_at = datetime.utcnow()
-        job.log_messages += f"\n[{datetime.utcnow().isoformat()}] Validation errors: {error_summary}"
+        job.completed_at = utc_now_naive()
+        job.log_messages += f"\n[{utc_now_naive().isoformat()}] Validation errors: {error_summary}"
         db.commit()
         return ProcessingResult(
             document_id=document_id,
@@ -235,7 +236,7 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
     # Step 5: Persist extracted data
     # ---------------------------------------------------------------
     job.current_step = "PERSISTING_EXTRACTIONS"
-    job.log_messages += f"\n[{datetime.utcnow().isoformat()}] Persisting extractions to database."
+    job.log_messages += f"\n[{utc_now_naive().isoformat()}] Persisting extractions to database."
     db.commit()
 
     labs_created = 0
@@ -399,9 +400,9 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
         # 5e — Update job
         job.status = "COMPLETED"
         job.current_step = "DONE"
-        job.completed_at = datetime.utcnow()
+        job.completed_at = utc_now_naive()
         job.log_messages += (
-            f"\n[{datetime.utcnow().isoformat()}] COMPLETED. "
+            f"\n[{utc_now_naive().isoformat()}] COMPLETED. "
             f"Labs: {labs_created}, Observations: {observations_created}, "
             f"Entities: {entities_created}, Review Items: {review_items_created}."
         )
@@ -415,7 +416,7 @@ def process_document(db: Session, document_id: str) -> ProcessingResult:
             from app.services.conflict_detector import ConflictDetector
             detected_conflicts = ConflictDetector.detect_all_conflicts(db, doc.patient_id)
             if detected_conflicts:
-                job.log_messages += f"\n[{datetime.utcnow().isoformat()}] Conflict detector identified {len(detected_conflicts)} clinical inconsistency/ies."
+                job.log_messages += f"\n[{utc_now_naive().isoformat()}] Conflict detector identified {len(detected_conflicts)} clinical inconsistency/ies."
                 db.commit()
         except Exception as c_err:
             logger.warning("Automated conflict detection non-fatal warning: %s", c_err)
@@ -475,8 +476,8 @@ def _fail_document(
         doc.processing_error = error_message[:1000]
         job.status = "FAILED"
         job.current_step = "FAILED"
-        job.completed_at = datetime.utcnow()
-        job.log_messages = (job.log_messages or "") + f"\n[{datetime.utcnow().isoformat()}] FAILED: {error_message}"
+        job.completed_at = utc_now_naive()
+        job.log_messages = (job.log_messages or "") + f"\n[{utc_now_naive().isoformat()}] FAILED: {error_message}"
         db.commit()
     except Exception:
         db.rollback()

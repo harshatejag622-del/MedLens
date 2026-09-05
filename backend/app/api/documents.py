@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from typing import List, Optional
@@ -131,7 +132,7 @@ async def upload_document(
         file_type=mime_type,
         file_size_bytes=file_size,
         sha256_checksum=checksum,
-        report_date=report_date or datetime.utcnow().strftime("%Y-%m-%d"),
+        report_date=report_date or utc_now_naive().strftime("%Y-%m-%d"),
         document_type=document_type.upper(),
         facility=facility_val,
         source=source_val,
@@ -145,9 +146,9 @@ async def upload_document(
         document_id=document.id,
         status="QUEUED",
         current_step="INGESTION_COMPLETED",
-        started_at=datetime.utcnow(),
+        started_at=utc_now_naive(),
         log_messages=(
-            f"[{datetime.utcnow().isoformat()}] Document '{clean_filename}' validated and stored. "
+            f"[{utc_now_naive().isoformat()}] Document '{clean_filename}' validated and stored. "
             f"SHA-256: {checksum}. Processing job initialized in QUEUED state."
         )
     )
@@ -234,15 +235,15 @@ def retry_document_processing(document_id: str, db: Session = Depends(get_db)):
     # Reset status
     doc.processing_status = "QUEUED"
     doc.processing_error = None
-    doc.updated_at = datetime.utcnow()
+    doc.updated_at = utc_now_naive()
 
     # Create new job execution or update current
     job = DocumentProcessingJob(
         document_id=doc.id,
         status="QUEUED",
         current_step="RETRY_QUEUED",
-        started_at=datetime.utcnow(),
-        log_messages=f"[{datetime.utcnow().isoformat()}] Processing retry requested by clinician."
+        started_at=utc_now_naive(),
+        log_messages=f"[{utc_now_naive().isoformat()}] Processing retry requested by clinician."
     )
     db.add(job)
     db.commit()
@@ -278,7 +279,7 @@ def mark_document_failed(
 
     doc.processing_status = "FAILED"
     doc.processing_error = reason
-    doc.updated_at = datetime.utcnow()
+    doc.updated_at = utc_now_naive()
 
     latest_job = db.query(DocumentProcessingJob).filter(
         DocumentProcessingJob.document_id == document_id
@@ -287,8 +288,8 @@ def mark_document_failed(
     if latest_job:
         latest_job.status = "FAILED"
         latest_job.current_step = "EXECUTION_HALTED"
-        latest_job.completed_at = datetime.utcnow()
-        latest_job.log_messages += f"\n[{datetime.utcnow().isoformat()}] ERROR: {reason}"
+        latest_job.completed_at = utc_now_naive()
+        latest_job.log_messages += f"\n[{utc_now_naive().isoformat()}] ERROR: {reason}"
 
     db.commit()
     db.refresh(doc)

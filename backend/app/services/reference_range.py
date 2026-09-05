@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Deterministic Laboratory Reference-Range Classification Engine
 ==============================================================
@@ -64,7 +65,6 @@ SUPPORTED RANGE FORMATS
   "12,0 - 16,0"           locale comma-decimal (normalised)
 """
 
-from __future__ import annotations
 
 import re
 from dataclasses import dataclass

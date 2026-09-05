@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Float, Boolean, DateTime, ForeignKey, Text
@@ -15,6 +16,6 @@ class ReferenceRange(Base):
     unit = Column(String(50), nullable=True)
     is_assessable = Column(Boolean, default=True, nullable=False)
     source_notes = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
 
     lab_result = relationship("LabResult", back_populates="reference_range_rel")

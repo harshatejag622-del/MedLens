@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Google Gemini Clinical Extraction Provider
 ==========================================
@@ -13,7 +14,6 @@ Features:
   - Full validation via Pydantic schemas before returning payload
 """
 
-from __future__ import annotations
 
 import json
 import re
@@ -148,6 +148,11 @@ class GeminiExtractionProvider(ClinicalExtractionProvider):
                 "GEMINI_API_KEY is not set. Configure it in .env or set AI_PROVIDER=local.",
                 retryable=False,
             )
+        # Persistent HTTP client pool for optimal throughput
+        self._client = httpx.Client(
+            timeout=90.0,
+            limits=httpx.Limits(max_keepalive_connections=10, max_connections=20)
+        )
 
     @property
     def provider_name(self) -> str:
@@ -207,8 +212,7 @@ class GeminiExtractionProvider(ClinicalExtractionProvider):
         last_error: Optional[Exception] = None
         for attempt in range(1, MAX_RETRIES + 1):
             try:
-                with httpx.Client(timeout=120.0) as client:
-                    response = client.post(url, json=payload)
+                response = self._client.post(url, json=payload)
 
                 if response.status_code == 200:
                     data = response.json()

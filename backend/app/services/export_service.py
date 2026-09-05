@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import io
 import csv
 import json
@@ -15,7 +16,7 @@ class ExportService:
             "export_metadata": {
                 "system": "MedLens Clinical Information Intelligence",
                 "version": "1.0.0",
-                "exported_at": datetime.utcnow().isoformat() + "Z",
+                "exported_at": utc_now_naive().isoformat() + "Z",
                 "disclaimer": "MedLens is an information organization tool. It does not provide medical diagnosis or treatment recommendations."
             },
             "patient": {

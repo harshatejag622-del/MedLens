@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Clinical Business Validator
 =============================
@@ -25,7 +26,6 @@ not throw exceptions for correctable issues. Fatal structural failures
 raise BusinessValidationError.
 """
 
-from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field

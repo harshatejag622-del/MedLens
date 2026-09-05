@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Deterministic Mock Clinical Extraction Provider
 ===============================================
@@ -16,7 +17,6 @@ Safety guarantees:
   - Assigns stable confidence scores based on match quality.
 """
 
-from __future__ import annotations
 
 import re
 from datetime import datetime
@@ -122,9 +122,61 @@ LAB_TEST_PATTERNS: List[Tuple[re.Pattern, str]] = [
         re.IGNORECASE
     ), "AST"),
     (re.compile(
-        r"(Bilirubin|Total\s+Bilirubin)[:\s]+([0-9]+\.?[0-9]*)\s*(mg/dL|µmol/L|umol/L)?",
+        r"(Bilirubin|Total\s+Bilirubin)[:\|\s]+([0-9]+\.?[0-9]*)\s*(mg/dL|µmol/L|umol/L)?",
         re.IGNORECASE
     ), "Total Bilirubin"),
+    (re.compile(
+        r"(eGFR|Estimated\s+GFR|Glomerular\s+Filtration\s+Rate)[:\|\s]+([0-9]+\.?[0-9]*)\s*(?:mL/min/1\.73m2|mL/min)?",
+        re.IGNORECASE
+    ), "eGFR"),
+    (re.compile(
+        r"(Calcium|Ca\+?)[:\|\s]+([0-9]+\.?[0-9]*)\s*(mg/dL|mmol/L)?",
+        re.IGNORECASE
+    ), "Calcium"),
+    (re.compile(
+        r"(Albumin)[:\|\s]+([0-9]+\.?[0-9]*)\s*(g/dL|g/L)?",
+        re.IGNORECASE
+    ), "Albumin"),
+    (re.compile(
+        r"(Total\s+Protein|Protein)[:\|\s]+([0-9]+\.?[0-9]*)\s*(g/dL|g/L)?",
+        re.IGNORECASE
+    ), "Total Protein"),
+    (re.compile(
+        r"(ALP|Alkaline\s+Phosphatase)[:\|\s]+([0-9]+\.?[0-9]*)\s*(?:U/L|IU/L)?",
+        re.IGNORECASE
+    ), "Alkaline Phosphatase"),
+    (re.compile(
+        r"(Uric\s+Acid)[:\|\s]+([0-9]+\.?[0-9]*)\s*(mg/dL|µmol/L)?",
+        re.IGNORECASE
+    ), "Uric Acid"),
+    (re.compile(
+        r"(Troponin|Troponin\s+I|Troponin\s+T|cTnI)[:\|\s]+([0-9]+\.?[0-9]*)\s*(?:ng/mL|µg/L)?",
+        re.IGNORECASE
+    ), "Troponin"),
+    (re.compile(
+        r"(CRP|C-Reactive\s+Protein)[:\|\s]+([0-9]+\.?[0-9]*)\s*(mg/L|mg/dL)?",
+        re.IGNORECASE
+    ), "CRP"),
+    (re.compile(
+        r"(ESR|Erythrocyte\s+Sedimentation\s+Rate)[:\|\s]+([0-9]+\.?[0-9]*)\s*(?:mm/hr|mm/h)?",
+        re.IGNORECASE
+    ), "ESR"),
+    (re.compile(
+        r"(Vitamin\s+D|25-OH\s+Vitamin\s+D|25-Hydroxyvitamin\s+D)[:\|\s]+([0-9]+\.?[0-9]*)\s*(?:ng/mL|nmol/L)?",
+        re.IGNORECASE
+    ), "Vitamin D"),
+    (re.compile(
+        r"(Ferritin)[:\|\s]+([0-9]+\.?[0-9]*)\s*(?:ng/mL|µg/L)?",
+        re.IGNORECASE
+    ), "Ferritin"),
+    (re.compile(
+        r"(Magnesium|Mg)[:\|\s]+([0-9]+\.?[0-9]*)\s*(mg/dL|mmol/L)?",
+        re.IGNORECASE
+    ), "Magnesium"),
+    (re.compile(
+        r"(Phosphorus|Phosphate|PO4)[:\|\s]+([0-9]+\.?[0-9]*)\s*(mg/dL|mmol/L)?",
+        re.IGNORECASE
+    ), "Phosphorus"),
 ]
 
 # Reference range patterns — must be adjacent to the lab line
@@ -147,6 +199,9 @@ CONDITION_KEYWORDS = [
     "hypothyroidism", "hyperthyroidism", "dyslipidaemia", "dyslipidemia",
     "heart failure", "atrial fibrillation", "depression", "anxiety",
     "chronic kidney disease", "rheumatoid arthritis", "osteoarthritis",
+    "coronary artery disease", "myocardial infarction", "stroke", "gout",
+    "pneumonia", "bronchitis", "fatty liver", "cirrhosis", "hepatitis",
+    "GERD", "peptic ulcer", "neuropathy", "retinopathy", "nephropathy"
 ]
 
 ALLERGY_PATTERNS = [
@@ -169,6 +224,8 @@ SYMPTOM_KEYWORDS = [
     "headache", "dizziness", "nausea", "vomiting", "abdominal pain", "weakness",
     "oedema", "edema", "fever", "cough", "haematuria", "haemoptysis",
     "weight loss", "weight gain", "polyuria", "polydipsia", "blurred vision",
+    "chest tightness", "sweating", "diaphoresis", "syncope", "tremor",
+    "joint pain", "back pain", "insomnia", "malaise", "chills", "loss of appetite"
 ]
 
 DATE_PATTERN = re.compile(

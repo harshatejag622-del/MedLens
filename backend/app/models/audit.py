@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, DateTime, Text
@@ -7,7 +8,7 @@ class AuditLog(Base):
     __tablename__ = "audit_logs"
 
     id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    timestamp = Column(DateTime, default=datetime.utcnow, index=True)
+    timestamp = Column(DateTime, default=utc_now_naive, index=True)
     user_id = Column(String(100), default="clinician_user")
     action = Column(String(100), nullable=False) # PATIENT_CREATED, DOCUMENT_UPLOADED, EXTRACTION_COMPLETED, FIELD_EDITED, FIELD_VERIFIED, CONFLICT_RESOLVED, SUMMARY_GENERATED, RECORD_EXPORTED
     entity_type = Column(String(50), nullable=False) # PATIENT, DOCUMENT, LAB_RESULT, CONFLICT, SUMMARY
@@ -26,4 +27,4 @@ class VerificationEvent(Base):
     corrected_value = Column(String(200), nullable=True)
     change_reason = Column(Text, nullable=True)
     provenance = Column(String(50), default="HUMAN_VERIFIED")
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=utc_now_naive)

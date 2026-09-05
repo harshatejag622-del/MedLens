@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Abstract Base for Clinical Extraction Providers
 ================================================
@@ -5,7 +6,6 @@ Defines the interface that all AI extraction providers must implement.
 Providers are expected to be stateless — all state is passed as arguments.
 """
 
-from __future__ import annotations
 
 import abc
 from typing import List

@@ -1,8 +1,10 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
 class ConflictResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     patient_id: str
     conflict_type: str
@@ -18,15 +20,14 @@ class ConflictResponse(BaseModel):
     resolved_at: Optional[datetime] = None
     created_at: datetime
 
-    class Config:
-        from_attributes = True
-
 class ConflictResolveRequest(BaseModel):
     resolution_notes: str
     resolved_by: str = "clinician_user"
     new_status: str = "RESOLVED" # REVIEWED, RESOLVED, DISMISSED, OPEN
 
 class ReviewItemResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: str
     document_id: Optional[str] = None
     patient_id: str
@@ -45,9 +46,6 @@ class ReviewItemResponse(BaseModel):
     reviewed_by: Optional[str] = None
     reviewed_at: Optional[datetime] = None
     created_at: datetime
-
-    class Config:
-        from_attributes = True
 
 class ReviewActionRequest(BaseModel):
     action: str # ACCEPT, CORRECT, REJECT, DEFER

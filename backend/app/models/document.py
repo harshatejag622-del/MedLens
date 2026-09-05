@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, ForeignKey, Text, Index
@@ -21,8 +22,8 @@ class Document(Base):
     processing_status = Column(String(50), default="QUEUED", index=True) # QUEUED, PROCESSING, COMPLETED, FAILED, REVIEW_REQUIRED
     processing_error = Column(Text, nullable=True)
     raw_text = Column(Text, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive, nullable=False)
 
     # Relationships
     patient = relationship("Patient", back_populates="documents")
@@ -42,7 +43,7 @@ class DocumentPage(Base):
     document_id = Column(String(36), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False, index=True)
     page_number = Column(Integer, nullable=False)
     text_content = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
 
     document = relationship("Document", back_populates="pages")
 
@@ -53,7 +54,7 @@ class DocumentProcessingJob(Base):
     document_id = Column(String(36), ForeignKey("documents.id", ondelete="CASCADE"), nullable=False, index=True)
     status = Column(String(50), default="QUEUED", index=True)
     current_step = Column(String(100), default="INITIALIZING")
-    started_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    started_at = Column(DateTime, default=utc_now_naive, nullable=False)
     completed_at = Column(DateTime, nullable=True)
     log_messages = Column(Text, default="")
 

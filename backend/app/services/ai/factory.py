@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 AI Provider Factory
 ====================
@@ -10,7 +11,6 @@ Selection priority:
   3. Default / AI_PROVIDER == 'local' → DeterministicMockProvider
 """
 
-from __future__ import annotations
 
 import logging
 from typing import Optional

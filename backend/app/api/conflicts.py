@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 from typing import List, Optional
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -79,7 +80,7 @@ def resolve_conflict(
     conflict.status = new_status
     conflict.resolution_notes = payload.resolution_notes
     conflict.resolved_by = payload.resolved_by
-    conflict.resolved_at = datetime.utcnow()
+    conflict.resolved_at = utc_now_naive()
     db.commit()
     db.refresh(conflict)
 

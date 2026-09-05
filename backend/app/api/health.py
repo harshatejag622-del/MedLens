@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -17,7 +18,7 @@ def health_check():
         "service": settings.APP_NAME,
         "version": settings.APP_VERSION,
         "environment": settings.ENVIRONMENT,
-        "timestamp": datetime.utcnow().isoformat() + "Z"
+        "timestamp": utc_now_naive().isoformat() + "Z"
     }
 
 @router.get("/ready")
@@ -32,7 +33,7 @@ def readiness_check(db: Session = Depends(get_db)):
             "database": "connected",
             "ai_provider": settings.AI_PROVIDER,
             "demo_mode": settings.DEMO_MODE,
-            "timestamp": datetime.utcnow().isoformat() + "Z"
+            "timestamp": utc_now_naive().isoformat() + "Z"
         }
     except Exception as e:
         raise HTTPException(

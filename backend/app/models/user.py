@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Boolean, DateTime
@@ -12,5 +13,5 @@ class User(Base):
     full_name = Column(String(100), nullable=False)
     role = Column(String(50), default="CLINICIAN", nullable=False) # ADMIN, CLINICIAN, AUDITOR, REVIEWER
     is_active = Column(Boolean, default=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive, nullable=False)

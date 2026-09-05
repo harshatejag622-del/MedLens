@@ -1,3 +1,5 @@
+from __future__ import annotations
+from app.utils.datetime_utils import utc_now_naive, utc_now
 """
 Clinical Conflict & Contradiction Detection Engine
 =================================================
@@ -21,7 +23,6 @@ DESIGN PRINCIPLES:
    never present automated detections as confirmed medical errors.
 """
 
-from __future__ import annotations
 
 import re
 import json
@@ -685,7 +686,7 @@ class ConflictDetector:
                     source_b=item.get("source_b"),
                     conflicting_values=item.get("conflicting_values"),
                     status="OPEN",
-                    created_at=datetime.utcnow()
+                    created_at=utc_now_naive()
                 )
                 db.add(conflict)
                 existing_keys.add(key)

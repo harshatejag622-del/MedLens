@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Float, Integer, DateTime, ForeignKey, Text, Index
@@ -21,7 +22,7 @@ class ExtractedEntity(Base):
     confidence = Column(Float, default=1.0)
     provenance = Column(String(50), default="AI_EXTRACTED")
     
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
 
     __table_args__ = (
         Index("idx_extracted_entities_patient_type", "patient_id", "entity_type"),

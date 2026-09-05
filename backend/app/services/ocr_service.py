@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 OCR & Text Extraction Service
 ==============================
@@ -10,7 +11,6 @@ Supported providers:
   - PlainTextExtractor  — UTF-8 text files treated as a single page
 """
 
-from __future__ import annotations
 
 import abc
 import re

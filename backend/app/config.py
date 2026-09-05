@@ -1,8 +1,10 @@
 import os
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 from typing import Optional
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+
     APP_NAME: str = "MedLens Clinical Intelligence"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
@@ -30,9 +32,5 @@ class Settings(BaseSettings):
     
     # CORS Configuration
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"]
-
-    class Config:
-        env_file = ".env"
-        extra = "ignore"
 
 settings = Settings()

@@ -1,8 +1,9 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from sqlalchemy import or_, and_
 from app.database import get_db
 from app.models.patient import (
@@ -96,7 +97,12 @@ def get_patient_overview(patient_id: str, db: Session = Depends(get_db)):
     documents, lab results with reference ranges, conflicts, summaries,
     and a synthesized chronological clinical timeline.
     """
-    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    patient = db.query(Patient).options(
+        selectinload(Patient.conditions),
+        selectinload(Patient.allergies),
+        selectinload(Patient.medications),
+        selectinload(Patient.symptoms)
+    ).filter(Patient.id == patient_id).first()
     if not patient:
         raise HTTPException(status_code=404, detail="Patient record not found")
 
@@ -416,7 +422,7 @@ def update_patient(patient_id: str, payload: PatientUpdate, db: Session = Depend
     if payload.is_archived is not None:
         patient.is_archived = payload.is_archived
 
-    patient.updated_at = datetime.utcnow()
+    patient.updated_at = utc_now_naive()
 
     # If sub-entities are provided, update them
     if payload.conditions is not None:
@@ -513,7 +519,7 @@ def archive_patient(patient_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Patient record not found")
 
     patient.is_archived = True
-    patient.updated_at = datetime.utcnow()
+    patient.updated_at = utc_now_naive()
     db.commit()
     db.refresh(patient)
 
@@ -538,7 +544,7 @@ def unarchive_patient(patient_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Patient record not found")
 
     patient.is_archived = False
-    patient.updated_at = datetime.utcnow()
+    patient.updated_at = utc_now_naive()
     db.commit()
     db.refresh(patient)
 

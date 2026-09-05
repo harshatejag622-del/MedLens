@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Float, Integer, DateTime, Boolean, ForeignKey, Text, Index
@@ -43,8 +44,8 @@ class LabResult(Base):
     version = Column(Integer, default=1)
     
     report_date = Column(String(20), nullable=True, index=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive, nullable=False)
 
     # Relationships
     patient = relationship("Patient", back_populates="lab_results")
@@ -67,7 +68,7 @@ class Observation(Base):
     source_evidence = Column(Text, nullable=True)
     confidence = Column(Float, default=1.0)
     provenance = Column(String(50), default="AI_EXTRACTED")
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
 
 class Summary(Base):
     __tablename__ = "summaries"
@@ -80,6 +81,6 @@ class Summary(Base):
     provenance = Column(String(50), default="AI_GENERATED")
     is_verified = Column(Boolean, default=False)
     verified_by = Column(String(100), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=utc_now_naive, nullable=False)
 
     patient = relationship("Patient", back_populates="summaries")

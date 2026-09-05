@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import uuid
 from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey, Text
@@ -20,8 +21,8 @@ class Patient(Base):
     relevant_history = Column(Text, nullable=True)
     is_archived = Column(Boolean, default=False, index=True)
     is_synthetic_demo = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
+    updated_at = Column(DateTime, default=utc_now_naive, onupdate=utc_now_naive)
 
     # Relationships
     conditions = relationship("PatientCondition", back_populates="patient", cascade="all, delete-orphan")
@@ -43,7 +44,7 @@ class PatientCondition(Base):
     diagnosed_date = Column(String(20), nullable=True)
     notes = Column(Text, nullable=True)
     provenance = Column(String(50), default="USER_PROVIDED")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     patient = relationship("Patient", back_populates="conditions")
 
@@ -56,7 +57,7 @@ class PatientAllergy(Base):
     reaction = Column(String(200), nullable=True)
     severity = Column(String(50), default="MODERATE") # MILD, MODERATE, SEVERE, ANAPHYLAXIS
     provenance = Column(String(50), default="USER_PROVIDED")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     patient = relationship("Patient", back_populates="allergies")
 
@@ -70,7 +71,7 @@ class PatientMedication(Base):
     frequency = Column(String(100), nullable=True)
     route = Column(String(50), default="ORAL")
     provenance = Column(String(50), default="USER_PROVIDED")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     patient = relationship("Patient", back_populates="medications")
 
@@ -83,6 +84,6 @@ class PatientSymptom(Base):
     duration = Column(String(100), nullable=True)
     severity = Column(String(50), default="MODERATE")
     provenance = Column(String(50), default="USER_PROVIDED")
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=utc_now_naive)
 
     patient = relationship("Patient", back_populates="symptoms")

@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 import json
 from datetime import datetime
 from sqlalchemy.orm import Session
@@ -26,7 +27,7 @@ class AuditService:
             user_id=user_id,
             details=details_str,
             ip_address=ip_address,
-            timestamp=datetime.utcnow()
+            timestamp=utc_now_naive()
         )
         db.add(entry)
         db.commit()
@@ -51,7 +52,7 @@ class AuditService:
             change_reason=change_reason,
             verified_by=verified_by,
             provenance="HUMAN_VERIFIED",
-            timestamp=datetime.utcnow()
+            timestamp=utc_now_naive()
         )
         db.add(event)
         db.commit()

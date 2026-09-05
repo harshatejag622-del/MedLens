@@ -1,3 +1,4 @@
+from app.utils.datetime_utils import utc_now_naive, utc_now
 from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models.user import User
@@ -132,8 +133,8 @@ def seed_database(db: Session):
                 document_id=doc.id,
                 status="COMPLETED",
                 current_step="EXTRACTION_VERIFIED",
-                started_at=datetime.utcnow(),
-                completed_at=datetime.utcnow(),
+                started_at=utc_now_naive(),
+                completed_at=utc_now_naive(),
                 log_messages="[INFO] Ingestion completed. [INFO] Checksum verified. [INFO] Extraction finished."
             )
             db.add(job)

@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Strict Clinical Extraction Schemas
 ===================================
@@ -16,7 +17,6 @@ CRITICAL SAFETY RULE:
   the contract.
 """
 
-from __future__ import annotations
 
 from enum import Enum
 from typing import List, Literal, Optional, Union

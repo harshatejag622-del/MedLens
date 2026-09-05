@@ -1,3 +1,5 @@
+from __future__ import annotations
+from app.utils.datetime_utils import utc_now_naive, utc_now
 """
 Longitudinal Clinical Intelligence & Summarization Engine
 =========================================================
@@ -12,7 +14,6 @@ Organizes a patient's integrated medical records into:
    verification-aware: HUMAN_VERIFIED vs HUMAN_CORRECTED vs AI_EXTRACTED vs HUMAN_REJECTED).
 """
 
-from __future__ import annotations
 
 import re
 import json
@@ -567,7 +568,7 @@ class ClinicalSummarizer:
             disclaimer=DISCLAIMER_TEXT,
             model_provider="evidence_grounded_synthesizer",
             provenance="SYSTEM_CALCULATED",
-            created_at=datetime.utcnow()
+            created_at=utc_now_naive()
         )
         db.add(summary_record)
         db.commit()

@@ -135,4 +135,4 @@ def test_hl7_fhir_r4_bundle_export():
 def test_hl7_fhir_r4_not_found():
     """Verify 404 for nonexistent patient FHIR request."""
     response = client.get("/api/patients/nonexistent-uuid-9999/fhir")
-    assert response.status_code == 404
+    assert response.status_code == 404
