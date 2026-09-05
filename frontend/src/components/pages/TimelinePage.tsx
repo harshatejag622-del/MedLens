@@ -22,7 +22,10 @@ import {
   Info,
   ExternalLink,
   ShieldCheck,
-  ShieldAlert
+  ShieldAlert,
+  Download,
+  Copy,
+  Check
 } from 'lucide-react';
 import { Patient, DocumentItem, ConflictItem } from '../../types';
 import { api } from '../../services/api';
@@ -144,6 +147,62 @@ export const TimelinePage: React.FC<TimelinePageProps> = ({
     } finally {
       setGeneratingSummary(false);
     }
+  };
+
+  const [copiedSummary, setCopiedSummary] = useState(false);
+
+  const getFullSummaryText = () => {
+    if (!summaryData) return '';
+    let txt = `MEDLENS CLINICAL SUMMARY\n`;
+    txt += `Patient: ${patient?.first_name} ${patient?.last_name} (MRN: ${patient?.mrn})\n`;
+    txt += `Generated: ${new Date().toLocaleString()}\n`;
+    txt += `--------------------------------------------------\n\n`;
+
+    if (summaryData.summary_text) {
+      txt += `${summaryData.summary_text}\n\n`;
+    }
+
+    if (summaryData.sections) {
+      txt += `[PATIENT OVERVIEW]\n${summaryData.sections.patient_overview || 'N/A'}\n\n`;
+      txt += `[CLINICAL HISTORY & DIAGNOSES]\n${summaryData.sections.diagnoses || 'N/A'}\n\n`;
+      txt += `[MEDICATIONS]\n${summaryData.sections.medications || 'N/A'}\n\n`;
+      txt += `[ALLERGIES]\n${summaryData.sections.allergies || 'N/A'}\n\n`;
+      txt += `[LABORATORY FINDINGS]\n${summaryData.sections.laboratories || 'N/A'}\n\n`;
+      txt += `[UNRESOLVED CLINICAL CONFLICTS]\n${summaryData.sections.unresolved_conflicts || 'N/A'}\n\n`;
+      txt += `[VERIFICATION AUDIT]\n${summaryData.sections.verification_status || 'N/A'}\n\n`;
+    }
+
+    if (summaryData.evidence_references && summaryData.evidence_references.length > 0) {
+      txt += `[TRACEABLE EVIDENCE REFERENCES]\n`;
+      summaryData.evidence_references.forEach((ev: any, idx: number) => {
+        txt += `${idx + 1}. [${ev.category}] ${ev.item} | Source: ${ev.source} | Provenance: ${ev.provenance}\n`;
+      });
+      txt += `\n`;
+    }
+
+    txt += `--------------------------------------------------\n`;
+    txt += `DISCLAIMER: MedLens is an information organization tool. It does not provide medical diagnosis or treatment recommendations.\n`;
+    return txt;
+  };
+
+  const handleDownloadSummaryText = () => {
+    const txt = getFullSummaryText();
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Clinical_Summary_${patient?.last_name}_${patient?.mrn}_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopySummaryText = async () => {
+    const txt = getFullSummaryText();
+    await navigator.clipboard.writeText(txt);
+    setCopiedSummary(true);
+    setTimeout(() => setCopiedSummary(false), 2000);
   };
 
   // Reset Filters
@@ -491,14 +550,38 @@ export const TimelinePage: React.FC<TimelinePageProps> = ({
                   Longitudinal Clinical Summary for {patient.first_name} {patient.last_name}
                 </h2>
               </div>
-              <button
-                disabled={generatingSummary}
-                onClick={handleGenerateSummary}
-                className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-50"
-              >
-                <Zap className={`w-3.5 h-3.5 ${generatingSummary ? 'animate-spin' : ''}`} />
-                <span>{generatingSummary ? 'Synthesizing...' : 'Regenerate Summary'}</span>
-              </button>
+              <div className="flex items-center gap-2">
+                {summaryData && (
+                  <>
+                    <button
+                      onClick={handleCopySummaryText}
+                      className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                      title="Copy full clinical summary to clipboard"
+                    >
+                      {copiedSummary ? <Check className="w-3.5 h-3.5 text-teal-400" /> : <Copy className="w-3.5 h-3.5 text-slate-400" />}
+                      <span>{copiedSummary ? 'Copied!' : 'Copy'}</span>
+                    </button>
+
+                    <button
+                      onClick={handleDownloadSummaryText}
+                      className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all"
+                      title="Download as a .txt report file"
+                    >
+                      <Download className="w-3.5 h-3.5 text-teal-400" />
+                      <span>Download .TXT</span>
+                    </button>
+                  </>
+                )}
+
+                <button
+                  disabled={generatingSummary}
+                  onClick={handleGenerateSummary}
+                  className="px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-semibold flex items-center gap-2 shadow-sm transition-all disabled:opacity-50"
+                >
+                  <Zap className={`w-3.5 h-3.5 ${generatingSummary ? 'animate-spin' : ''}`} />
+                  <span>{generatingSummary ? 'Synthesizing...' : 'Regenerate Summary'}</span>
+                </button>
+              </div>
             </div>
 
             {/* Clinical Safety Disclaimer Callout */}
